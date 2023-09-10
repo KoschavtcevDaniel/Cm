@@ -12,8 +12,6 @@ with open('input.txt', 'r', encoding='utf-8') as f_in, open('output.txt', 'w', e
 
     x = [0] * n
     getcontext().prec = 6
-    print(*b)
-    print(*a)
 
     for k in range(n-1):
         for i in range(k+1, n):
@@ -25,10 +23,21 @@ with open('input.txt', 'r', encoding='utf-8') as f_in, open('output.txt', 'w', e
             for j in range(k, n):
                 a[i][j] = a[i][j] - t * a[k][j]
 
+
+    f = 1
     for k in range(n-1, -1, -1):
         s = Dc(0)
+        if not(f):
+            break
         for j in range(k+1, n):
             s += Dc(a[k][j] * x[j])
+        if a[k][k] == 0 and b != 0:
+            f_out.writelines('No answer')
+            f = 0
+            break
+        elif s == 0 and b == 0:
+            x = 0
         x[k] = Dc((b[k] - s)) / Dc(a[k][k])
 
-    f_out.writelines(' '.join(map(str, x)))
+    if f:
+        f_out.writelines(' '.join(map(str, x)))
