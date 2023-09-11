@@ -35,7 +35,7 @@ with open('input.txt', 'r', encoding='utf-8') as f_in, open('output.txt', 'w', e
             f_out.writelines('No answer')
             f = 0
             break
-        elif s == 0 and b == 0:
+        elif s == 0 and b[k] == 0:
             x = 0
         x[k] = Dc((b[k] - s)) / Dc(a[k][k])
 
