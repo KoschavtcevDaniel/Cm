@@ -1,9 +1,4 @@
 from decimal import Decimal as Dc, getcontext
-from math import fabs
-#import numpy as np
-
-#def is_pos_def(x):
-#    return np.all(np.linalg.eigvals(x) > 0)
 
 getcontext().prec = 6
 
@@ -41,10 +36,10 @@ def check(a):
 def create(a, n):
     u = [[0] * n for l in range(n)]
     for i in range(0, n):
-        s1 = Dc('0')
-        s2 = Dc('0')
         for j in range(n):
-            for k in range(i-1):
+            s1 = Dc('0')
+            s2 = Dc('0')
+            for k in range(i):
                 if i == j:
                     s1 += Dc(u[k][i] ** 2)
                 else:
@@ -70,9 +65,10 @@ def create_y(u, b, n):
     y = [0] * n
     for i in range(n):
         s = 0
-        for k in range(i-1):
+        for k in range(i):
             s += Dc(u[k][i] * y[k])
         y[i] = Dc(b[i] - s) / Dc(u[i][i])
+    print('y    ', *y)
     return y
 
 def create_x(u, y, n):
@@ -82,9 +78,10 @@ def create_x(u, y, n):
         for k in range(i + 1, n):
             s += Dc(u[i][k] * x[k])
         x[i] = Dc(y[i] - s) / Dc(u[i][i])
+    print('x    ', *x)
     return x
 
-with open('input2.txt', 'r', encoding='utf-8') as f_in, open('output2.txt', 'w', encoding='utf-8') as f_out:
+with open('input.txt', 'r', encoding='utf-8') as f_in, open('output.txt', 'w', encoding='utf-8') as f_out:
     n = int(f_in.readline())
     a = [] * n
 
@@ -93,7 +90,7 @@ with open('input2.txt', 'r', encoding='utf-8') as f_in, open('output2.txt', 'w',
         a.append(temp)
 
     b = [Dc(k) for k in f_in.readline().split()]
-
+    print(*a, sep='\n')
     s = ''
     ac = copy_a(a, n)
     if check(ac) and is_pos_def(ac):
