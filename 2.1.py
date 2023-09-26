@@ -120,6 +120,6 @@ with open('input.txt', 'r', encoding='utf-8') as f_in, open('output.txt', 'w', e
         x = create_x(u, y, n)
         s = ' '.join(map(str, x))
     else:
-        s = 'Not symmetric matrix'
+        s = 'Not positively defined matrix'
     print(s)
     f_out.writelines(s)
