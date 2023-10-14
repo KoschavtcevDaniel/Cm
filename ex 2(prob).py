@@ -1,4 +1,20 @@
 from decimal import Decimal as Dc, getcontext
+import matplotlib.pyplot as plt
+import numpy as np
+
+getcontext().prec = 5
+
+
+def check_n(n):
+    if n < 2:
+        return False
+    return True
+
+
+def check_m(m, n):
+    if m > n or m < 0:
+        return False
+    return True
 
 
 def bubble_sort(nums, n):
@@ -12,33 +28,100 @@ def bubble_sort(nums, n):
 
 
 def interpol(a, n):
-    for j in range(2, n-1):
-        for i in range(n-1):
-            a[i][j] = (a[i+1][j-1] - a[i][j-1]) / (a[i+1][0] - a[i][0])
+    k = 0
+    for j in range(2, n+1):
+        k += 1
+        for i in range(n-k):
+            a[i][j] = (a[i+1][j-1] - a[i][j-1]) / (a[i+k][0] - a[i][0])
     return a
 
 
+def result(a, m):
+    tmp = [[0] * (i+1) for i in range(m)]
+    for j in range(1, m+1):
+        tmp[j-1][0] = a[n-j][j]
+        for i in range(1, j):
+            tmp[j-1][i] = a[n-i][0]
+    return tmp
+
+
+def create_func(ans, x):
+    k = len(ans)
+    f = 0
+    for i in range(k):
+        p = 1
+        for j in range(1, len(ans[i])):
+            p *= ans[i][0] * (x - ans[i][j])
+        f += p
+    return f
+
+
+def draw_pict(ans1, ans2, x_0, y_0):
+    # Создаём экземпляр класса figure и добавляем к Figure область Axes
+    fig, ax = plt.subplots()
+
+    # Добавим заголовок графика
+    ax.set_title('График функции')
+    # Название оси X:
+    ax.set_xlabel('x')
+    # Название оси Y:
+    ax.set_ylabel('y')
+
+    # Начало и конец изменения значения X, разбитое на 100 точек
+    x = np.linspace(-10, 10, 10000)  # X от -5 до 5
+
+    # Построение функции
+    f1 = create_func(ans1, x)
+    f2 = create_func(ans2, x)
+    # Вывод графика
+    ax.plot(x, f1)
+    ax.plot(x, f2)
+    ax.plot(x_0, y_0, 'ro')
+    plt.show()
+
+
 with open('input.txt', 'r', encoding='utf-8') as f_in:
-    x0 = Dc(f_in.readline())
     n = int(f_in.readline())
 
-    a = [[0] * n for i in range(n)]
+    a = [[0] * (n+1) for i in range(n)]
+    x_, y_ = [], []
     for i in range(n):
-        temp = [Dc(k) for k in f_in.readline().split()]
-
+        temp = [float(k) for k in f_in.readline().split()]
         a[i][0] = temp[0]
         a[i][1] = temp[1]
+        x_.append(temp[0])
+        y_.append(temp[1])
 
     t = []
     for k in range(n):
         t.append(a[k].copy())
 
-    res = interpol(a, n)
-    for j in res:
-        print(*j, sep=' ')
+    tmp = []
+    for k in range(n):
+        tmp.append(a[k].copy())
 
-    bubble_sort(t, n)
-    print()
-    res2 = interpol(t, n)
-    for l in res2:
-        print(*l, sep=' ')
+    if check_n(n):
+        print('res1:    ')
+        res1 = interpol(t, n)
+        for j in res1:
+            print(*j, sep=' ')
+        print()
+        bubble_sort(tmp, n)
+        print('res2:    ')
+        res2 = interpol(tmp, n)
+        for l in res2:
+            print(*l, sep=' ')
+        print()
+        print("Input m-values: ", end=' ')
+        m = int(input())
+        while not(check_m(m, n)):
+            print('m-values incorrect, input again: ', end=' ')
+            m = int(input())
+        ans1 = result(res1, m)
+        ans2 = result(res2, m)
+        print()
+        print('ans1:    ', *ans1)
+        print('ans2:    ', *ans2)
+        draw_pict(ans1, ans2, x_[:m], y_[:m])
+    else:
+        print('The task condition is not met')
