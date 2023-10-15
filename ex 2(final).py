@@ -1,9 +1,6 @@
-from decimal import Decimal as Dc, getcontext
 import matplotlib.pyplot as plt
 import numpy as np
-
-getcontext().prec = 5
-
+from time import time
 
 def check_n(n):
     if n < 2:
@@ -49,9 +46,9 @@ def create_func(ans, x):
     k = len(ans)
     f = 0
     for i in range(k):
-        p = 1
+        p = ans[i][0]
         for j in range(1, len(ans[i])):
-            p *= ans[i][0] * (x - ans[i][j])
+            p *= (x - ans[i][j])
         f += p
     return f
 
@@ -68,19 +65,20 @@ def draw_pict(ans1, ans2, x_0, y_0):
     ax.set_ylabel('y')
 
     # Начало и конец изменения значения X, разбитое на 100 точек
-    x = np.linspace(-10, 10, 10000)  # X от -5 до 5
+    x = np.linspace(-10, 10, 1000)
 
     # Построение функции
     f1 = create_func(ans1, x)
     f2 = create_func(ans2, x)
     # Вывод графика
-    ax.plot(x, f1)
-    ax.plot(x, f2)
+    ax.plot(x, f1)  # blue
+    ax.plot(x, f2)  # orange
     ax.plot(x_0, y_0, 'ro')
     plt.show()
 
 
 with open('input.txt', 'r', encoding='utf-8') as f_in:
+    t1 = time()
     n = int(f_in.readline())
 
     a = [[0] * (n+1) for i in range(n)]
@@ -122,6 +120,8 @@ with open('input.txt', 'r', encoding='utf-8') as f_in:
         print()
         print('ans1:    ', *ans1)
         print('ans2:    ', *ans2)
-        draw_pict(ans1, ans2, x_[:m], y_[:m])
+        t2 = time()
+        print(t2 - t1)
+        draw_pict(ans1, ans2, x_, y_)
     else:
         print('The task condition is not met')
