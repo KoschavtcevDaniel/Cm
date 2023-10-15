@@ -53,7 +53,19 @@ def create_func(ans, x):
     return f
 
 
-def draw_pict(ans1, ans2, x_0, y_0):
+def points(mass, m):
+    k = len(mass)
+    res = [[0]*m for i in range(2)]
+    ind = 0
+    for i in range(k-1, k-m-1, -1):
+        res[0][ind] = mass[i][0]
+        res[1][ind] = mass[i][1]
+        ind += 1
+    return res
+
+
+
+def draw_pict(ans1, ans2, p1, p2):
     # Создаём экземпляр класса figure и добавляем к Figure область Axes
     fig, ax = plt.subplots()
 
@@ -72,8 +84,9 @@ def draw_pict(ans1, ans2, x_0, y_0):
     f2 = create_func(ans2, x)
     # Вывод графика
     ax.plot(x, f1)  # blue
+    plt.scatter(p1[0], p1[1])
     ax.plot(x, f2)  # orange
-    ax.plot(x_0, y_0, 'ro')
+    plt.scatter(p2[0], p2[1])
     plt.show()
 
 
@@ -82,46 +95,52 @@ with open('input.txt', 'r', encoding='utf-8') as f_in:
     n = int(f_in.readline())
 
     a = [[0] * (n+1) for i in range(n)]
-    x_, y_ = [], []
+    check = set()
     for i in range(n):
         temp = [float(k) for k in f_in.readline().split()]
         a[i][0] = temp[0]
         a[i][1] = temp[1]
-        x_.append(temp[0])
-        y_.append(temp[1])
+        check.add(tuple(temp))
 
-    t = []
-    for k in range(n):
-        t.append(a[k].copy())
+    if len(check) == n:
+        t = []
+        for k in range(n):
+            t.append(a[k].copy())
 
-    tmp = []
-    for k in range(n):
-        tmp.append(a[k].copy())
+        tmp = []
+        for k in range(n):
+            tmp.append(a[k].copy())
 
-    if check_n(n):
-        print('res1:    ')
-        res1 = interpol(t, n)
-        for j in res1:
-            print(*j, sep=' ')
-        print()
-        bubble_sort(tmp, n)
-        print('res2:    ')
-        res2 = interpol(tmp, n)
-        for l in res2:
-            print(*l, sep=' ')
-        print()
-        print("Input m-values: ", end=' ')
-        m = int(input())
-        while not(check_m(m, n)):
-            print('m-values incorrect, input again: ', end=' ')
+        if check_n(n):
+            print('res1:    ')
+            res1 = interpol(t, n)
+            for j in res1:
+                print(*j, sep=' ')
+
+            print()
+            bubble_sort(tmp, n)
+            print('res2:    ')
+            res2 = interpol(tmp, n)
+            for l in res2:
+                print(*l, sep=' ')
+            print()
+            print("Input m-values: ", end=' ')
+
             m = int(input())
-        ans1 = result(res1, m)
-        ans2 = result(res2, m)
-        print()
-        print('ans1:    ', *ans1)
-        print('ans2:    ', *ans2)
-        t2 = time()
-        print(t2 - t1)
-        draw_pict(ans1, ans2, x_, y_)
+            while not(check_m(m, n)):
+                print('m-values incorrect, input again: ', end=' ')
+                m = int(input())
+            p1 = points(t, m)
+            p2 = points(tmp, m)
+            ans1 = result(res1, m)
+            ans2 = result(res2, m)
+            print()
+            print('ans1:    ', *ans1)
+            print('ans2:    ', *ans2)
+            t2 = time()
+            print(t2 - t1)
+            draw_pict(ans1, ans2, p1, p2)
+        else:
+            print('The task condition is not met')
     else:
-        print('The task condition is not met')
+        print('Incorrect points')
